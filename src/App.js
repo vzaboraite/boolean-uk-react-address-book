@@ -14,13 +14,18 @@ export default function App() {
 
   // Get contacts data from the server
   useEffect(() => {
+    getContacts();
+  }, []);
+
+  // Function used to get contacts from the server
+  function getContacts() {
     fetch("http://localhost:3030/contacts")
       .then((res) => res.json())
       .then((contactsData) => {
         console.log(contactsData);
         setContacts(contactsData);
       });
-  }, []);
+  }
 
   return (
     <>
@@ -29,7 +34,9 @@ export default function App() {
         hideForm={hideForm}
         setHideForm={setHideForm}
       />
-      <main>{!hideForm && <CreateContactForm />}</main>
+      <main>
+        {!hideForm && <CreateContactForm getContacts={getContacts} />}
+      </main>
     </>
   );
 }

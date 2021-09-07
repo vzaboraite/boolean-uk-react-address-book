@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-function CreateContactForm() {
-  // [TODO] Write form handlers here and POST requests here...
+function CreateContactForm({ getContacts }) {
+  // state used to store data from input fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [street, setStreet] = useState("");
@@ -42,8 +42,62 @@ function CreateContactForm() {
     setBlock(event.target.checked);
   };
 
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    // Create addressInfo object and "POST" it to the `/addresses` endpoint
+    const addressInfo = {
+      street,
+      city,
+      postCode,
+    };
+
+    const addressFetchOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(addressInfo),
+    };
+
+    fetch("http://localhost:3030/addresses", addressFetchOptions)
+      .then((res) => res.json())
+      .then((addressData) => {
+        console.log("addressData: ", addressData);
+
+        // Create contactInfo object and "POST" it to the `/contacts` endpoint.
+        // Because contactInfo requires addressId, it is created inside `addresses fetch request`
+        // to get that id from addressData.
+        const contactInfo = {
+          firstName,
+          lastName,
+          blockContact: block,
+          addressId: addressData.id,
+        };
+
+        const contactFetchOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(contactInfo),
+        };
+
+        fetch("http://localhost:3030/contacts", contactFetchOptions)
+          .then((res) => res.json())
+          .then((contactData) => {
+            console.log("contactData: ", contactData);
+            // Function getContacts() is called here, to do the fetch request(which is defined
+            // in App.js), which gets updated contacts array and enforces to re-render the contacts list.
+            getContacts();
+          });
+      });
+  };
+
   return (
-    <form className="form-stack light-shadow center contact-form">
+    <form
+      className="form-stack light-shadow center contact-form"
+      onSubmit={handleFormSubmit}
+    >
       <h1>Create Contact</h1>
       <label htmlFor="first-name-input">First Name:</label>
       <input
