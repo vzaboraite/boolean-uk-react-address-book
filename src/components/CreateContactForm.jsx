@@ -1,50 +1,49 @@
 import { useState } from "react";
 
 function CreateContactForm({ getContacts }) {
-  // state used to store data from input fields
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [street, setStreet] = useState("");
-  const [city, setCity] = useState("");
-  const [postCode, setPostCode] = useState("");
-  const [block, setBlock] = useState(false);
-
-  console.log("State inside CreateContactForm: ", {
-    firstName,
-    lastName,
-    street,
-    city,
-    postCode,
-    block,
+  // State as one object to store user input from the form
+  const [userInput, setUserInput] = useState({
+    firstName: "",
+    lastName: "",
+    street: "",
+    city: "",
+    postCode: "",
+    block: false,
   });
 
-  const handleFirstNameInput = (event) => {
-    setFirstName(event.target.value);
+  console.log({ userInput });
+
+  // In order to use input field names dynamically, I've set `name` attributes in the form
+  // accordingly to the `user Input` state object key names.
+
+  const handleFormInput = (event) => {
+    const inputFieldName = event.target.name;
+    const targetValue = event.target.value;
+
+    console.log({ inputFieldName, targetValue });
+
+    setUserInput({
+      ...userInput,
+      [inputFieldName]: targetValue,
+    });
   };
 
-  const handleLastNameInput = (event) => {
-    setLastName(event.target.value);
-  };
+  const handleCheckboxInput = (event) => {
+    const isChecked = event.target.checked;
+    const inputFieldName = event.target.name;
 
-  const handleStreetInput = (event) => {
-    setStreet(event.target.value);
-  };
-
-  const handleCityInput = (event) => {
-    setCity(event.target.value);
-  };
-
-  const handlePostCodeInput = (event) => {
-    setPostCode(event.target.value);
-  };
-
-  const handleBlockCheckbox = (event) => {
-    setBlock(event.target.checked);
+    console.log({ isChecked, inputFieldName });
+    setUserInput({
+      ...userInput,
+      [inputFieldName]: isChecked,
+    });
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
     // Create addressInfo object and "POST" it to the `/addresses` endpoint
+    const { street, city, postCode } = userInput;
+
     const addressInfo = {
       street,
       city,
@@ -67,6 +66,9 @@ function CreateContactForm({ getContacts }) {
         // Create contactInfo object and "POST" it to the `/contacts` endpoint.
         // Because contactInfo requires addressId, it is created inside `addresses fetch request`
         // to get that id from addressData.
+
+        const { firstName, lastName, block } = userInput;
+
         const contactInfo = {
           firstName,
           lastName,
@@ -102,44 +104,44 @@ function CreateContactForm({ getContacts }) {
       <label htmlFor="first-name-input">First Name:</label>
       <input
         id="first-name-input"
-        name="first-name-input"
+        name="firstName"
         type="text"
-        onChange={handleFirstNameInput}
+        onChange={handleFormInput}
       />
       <label htmlFor="last-name-input">Last Name:</label>
       <input
         id="last-name-input"
-        name="last-name-input"
+        name="lastName"
         type="text"
-        onChange={handleLastNameInput}
+        onChange={handleFormInput}
       />
       <label htmlFor="street-input">Street:</label>
       <input
         id="street-input"
-        name="street-input"
+        name="street"
         type="text"
-        onChange={handleStreetInput}
+        onChange={handleFormInput}
       />
       <label htmlFor="city-input">City:</label>
       <input
         id="city-input"
-        name="city-input"
+        name="city"
         type="text"
-        onChange={handleCityInput}
+        onChange={handleFormInput}
       />
       <label htmlFor="post-code-input">Post Code:</label>
       <input
         id="post-code-input"
-        name="post-code-input"
+        name="postCode"
         type="text"
-        onChange={handlePostCodeInput}
+        onChange={handleFormInput}
       />
       <div className="checkbox-section">
         <input
           id="block-checkbox"
-          name="block-checkbox"
+          name="block"
           type="checkbox"
-          onChange={handleBlockCheckbox}
+          onChange={handleCheckboxInput}
         />
         <label htmlFor="block-checkbox">Block</label>
       </div>
