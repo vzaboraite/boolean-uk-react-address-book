@@ -1,6 +1,13 @@
 import { useState } from "react";
 
-function CreateContactForm({ getContacts }) {
+function CreateContactForm({
+  getContacts,
+  hideContactView,
+  hideCreateContactForm,
+  setHideContactView,
+  setHideCreateForm,
+  setContactToView,
+}) {
   // State as one object to store user input from the form
   const [userInput, setUserInput] = useState({
     firstName: "",
@@ -89,6 +96,17 @@ function CreateContactForm({ getContacts }) {
             // Function getContacts() is called here, to do the fetch request(which is defined
             // in App.js), which gets updated contacts array and enforces to re-render the contacts list.
             getContacts();
+
+            const contactToView = {
+              ...contactData,
+              address: {
+                ...addressData,
+              },
+            };
+
+            setContactToView(contactToView);
+            setHideContactView(!hideContactView);
+            setHideCreateForm(!hideCreateContactForm);
           });
       });
   };
