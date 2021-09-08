@@ -19,24 +19,22 @@ function CreateContactForm({ getContacts }) {
   const handleFormInput = (event) => {
     const inputFieldName = event.target.name;
     const targetValue = event.target.value;
-
-    console.log({ inputFieldName, targetValue });
-
-    setUserInput({
-      ...userInput,
-      [inputFieldName]: targetValue,
-    });
-  };
-
-  const handleCheckboxInput = (event) => {
+    const inputType = event.target.type;
     const isChecked = event.target.checked;
-    const inputFieldName = event.target.name;
 
-    console.log({ isChecked, inputFieldName });
-    setUserInput({
-      ...userInput,
-      [inputFieldName]: isChecked,
-    });
+    console.log({ inputFieldName, targetValue, inputType, isChecked });
+
+    if (inputType === "checkbox") {
+      setUserInput({
+        ...userInput,
+        [inputFieldName]: isChecked,
+      });
+    } else {
+      setUserInput({
+        ...userInput,
+        [inputFieldName]: targetValue,
+      });
+    }
   };
 
   const handleFormSubmit = (event) => {
@@ -141,7 +139,7 @@ function CreateContactForm({ getContacts }) {
           id="block-checkbox"
           name="block"
           type="checkbox"
-          onChange={handleCheckboxInput}
+          onChange={handleFormInput}
         />
         <label htmlFor="block-checkbox">Block</label>
       </div>
