@@ -43,7 +43,7 @@ export default function App() {
         setHideContactView={setHideContactView}
         setContactToEdit={setContactToEdit}
       />
-      <main>
+      <main className="view-section">
         {!hideCreateForm && <CreateContactForm getContacts={getContacts} />}
         {!hideEditForm && (
           <EditContactForm
