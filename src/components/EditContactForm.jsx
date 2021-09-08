@@ -103,6 +103,24 @@ function EditContactForm(props) {
       });
   };
 
+  const handleDeleteButton = (event) => {
+    const contactToDelete = { ...contactToEdit };
+    const { addressId, id } = contactToDelete;
+    console.log(event);
+    fetch(`http://localhost:3030/addresses/${addressId}`, { method: "DELETE" })
+      .then((res) => res.json())
+      .then((dataToDelete) => {
+        console.log({ dataToDelete });
+
+        fetch(`http://localhost:3030/contacts/${id}`, { method: "DELETE" })
+          .then((res) => res.json())
+          .then((dataToDelete) => {
+            console.log({ dataToDelete });
+          });
+        getContacts();
+      });
+  };
+
   return (
     <form
       className="form-stack light-shadow center contact-form"
@@ -164,7 +182,11 @@ function EditContactForm(props) {
         <button className="button blue" type="submit">
           Edit
         </button>
-        <button className="button blue" type="submit">
+        <button
+          className="button blue"
+          type="submit"
+          onClick={handleDeleteButton}
+        >
           Delete
         </button>
       </div>
