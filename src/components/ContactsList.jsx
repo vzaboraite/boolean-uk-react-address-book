@@ -3,9 +3,12 @@ function ContactsList(props) {
     contacts,
     hideCreateForm,
     hideEditForm,
+    hideContactView,
     setHideCreateForm,
     setHideEditForm,
+    setHideContactView,
     setContactToEdit,
+    setContactToView,
   } = props;
 
   return (
@@ -23,6 +26,11 @@ function ContactsList(props) {
         {contacts.map((contact, index) => {
           const { firstName, lastName, address } = contact;
 
+          const handleViewButton = (event) => {
+            setHideContactView(!hideContactView);
+            setContactToView(contact);
+          };
+
           const handleEditButton = (event) => {
             setHideEditForm(!hideEditForm);
             setContactToEdit(contact);
@@ -33,6 +41,9 @@ function ContactsList(props) {
               <h3>
                 {firstName} {lastName}
               </h3>
+              <button onClick={handleViewButton} className="button">
+                View
+              </button>
               <button onClick={handleEditButton} className="button">
                 Edit
               </button>

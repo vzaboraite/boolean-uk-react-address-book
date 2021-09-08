@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ContactsList from "./components/ContactsList";
+import ContactView from "./components/ContactView";
 import CreateContactForm from "./components/CreateContactForm";
 import EditContactForm from "./components/EditContactForm";
 import "./styles.css";
@@ -7,13 +8,16 @@ import "./styles.css";
 export default function App() {
   const [contacts, setContacts] = useState([]);
   const [hideCreateForm, setHideCreateForm] = useState(true);
+  const [hideContactView, setHideContactView] = useState(true);
   const [hideEditForm, setHideEditForm] = useState(true);
 
   const [contactToEdit, setContactToEdit] = useState(null);
+  const [contactToView, setContactToView] = useState(null);
 
   console.log("State ", {
     contacts,
     hideCreateForm,
+    contactToView,
   });
 
   // Get contacts data from the server
@@ -42,6 +46,7 @@ export default function App() {
         setHideEditForm={setHideEditForm}
         setHideContactView={setHideContactView}
         setContactToEdit={setContactToEdit}
+        setContactToView={setContactToView}
       />
       <main className="view-section">
         {!hideCreateForm && <CreateContactForm getContacts={getContacts} />}
@@ -51,6 +56,7 @@ export default function App() {
             getContacts={getContacts}
           />
         )}
+        {!hideContactView && <ContactView contactToView={contactToView} />}
       </main>
     </>
   );
