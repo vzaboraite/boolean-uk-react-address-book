@@ -8,7 +8,7 @@ function CreateContactForm({ getContacts }) {
     street: "",
     city: "",
     postCode: "",
-    block: false,
+    blockContact: false,
   });
 
   console.log({ userInput });
@@ -70,7 +70,7 @@ function CreateContactForm({ getContacts }) {
         const contactInfo = {
           firstName,
           lastName,
-          blockContact: block,
+          blockContact,
           addressId: addressData.id,
         };
 
@@ -137,7 +137,7 @@ function CreateContactForm({ getContacts }) {
       <div className="checkbox-section">
         <input
           id="block-checkbox"
-          name="block"
+          name="blockContact"
           type="checkbox"
           onChange={handleFormInput}
         />
