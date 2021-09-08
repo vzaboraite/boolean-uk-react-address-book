@@ -24,15 +24,17 @@ function ContactsList(props) {
       </header>
       <ul className="contacts-list">
         {contacts.map((contact, index) => {
-          const { firstName, lastName, address } = contact;
+          const { firstName, lastName } = contact;
 
           const handleViewButton = (event) => {
-            setHideContactView(!hideContactView);
+            setHideContactView(false);
+            setHideEditForm(true);
             setContactToView(contact);
           };
 
           const handleEditButton = (event) => {
-            setHideEditForm(!hideEditForm);
+            setHideEditForm(false);
+            setHideContactView(true);
             setContactToEdit(contact);
           };
 
