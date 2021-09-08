@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import ContactsList from "./components/ContactsList";
 import CreateContactForm from "./components/CreateContactForm";
+import EditContactForm from "./components/EditContactForm";
 import "./styles.css";
 
 export default function App() {
   const [contacts, setContacts] = useState([]);
-  const [hideForm, setHideForm] = useState(true);
+  const [hideCreateForm, setHideCreateForm] = useState(true);
+  const [hideEditForm, setHideEditForm] = useState(true);
+
+  const [contactToEdit, setContactToEdit] = useState(null);
 
   console.log("State ", {
     contacts,
-    hideForm,
+    hideCreateForm,
   });
 
   // Get contacts data from the server
@@ -31,11 +35,22 @@ export default function App() {
     <>
       <ContactsList
         contacts={contacts}
-        hideForm={hideForm}
-        setHideForm={setHideForm}
+        hideCreateForm={hideCreateForm}
+        hideEditForm={hideEditForm}
+        hideContactView={hideContactView}
+        setHideCreateForm={setHideCreateForm}
+        setHideEditForm={setHideEditForm}
+        setHideContactView={setHideContactView}
+        setContactToEdit={setContactToEdit}
       />
       <main>
-        {!hideForm && <CreateContactForm getContacts={getContacts} />}
+        {!hideCreateForm && <CreateContactForm getContacts={getContacts} />}
+        {!hideEditForm && (
+          <EditContactForm
+            contactToEdit={contactToEdit}
+            getContacts={getContacts}
+          />
+        )}
       </main>
     </>
   );
