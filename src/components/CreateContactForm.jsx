@@ -65,7 +65,7 @@ function CreateContactForm({ getContacts }) {
         // Because contactInfo requires addressId, it is created inside `addresses fetch request`
         // to get that id from addressData.
 
-        const { firstName, lastName, block } = userInput;
+        const { firstName, lastName, blockContact } = userInput;
 
         const contactInfo = {
           firstName,
