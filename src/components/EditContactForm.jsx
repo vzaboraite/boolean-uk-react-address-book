@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function EditContactForm(props) {
   const {
@@ -19,6 +19,20 @@ function EditContactForm(props) {
     postCode: contactToEdit.address.postCode,
     blockContact: contactToEdit.blockContact,
   });
+
+  /* This useEffect sets `EditContactForm` with contact data. It is triggered when `Edit`
+     button is clicked on specific in `ContactList` item
+     Resource: https://stackoverflow.com/questions/54865764/react-usestate-does-not-reload-state-from-props */
+  useEffect(() => {
+    setUserInputsToEdit({
+      firstName: contactToEdit.firstName,
+      lastName: contactToEdit.lastName,
+      street: contactToEdit.address.street,
+      city: contactToEdit.address.city,
+      postCode: contactToEdit.address.postCode,
+      blockContact: contactToEdit.blockContact,
+    });
+  }, [contactToEdit]);
 
   const { firstName, lastName, street, city, postCode, blockContact } =
     userInputsToEdit;
