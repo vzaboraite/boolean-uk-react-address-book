@@ -1,7 +1,15 @@
 import { useState } from "react";
 
-function EditContactForm({ contactToEdit, getContacts }) {
-  console.log("Inside EditContactForm: ", { contactToEdit });
+function EditContactForm(props) {
+  const {
+    contactToEdit,
+    getContacts,
+    hideContactView,
+    hideEditForm,
+    setContactToView,
+    setHideContactView,
+    setHideEditForm,
+  } = props;
 
   const [userInputsToEdit, setUserInputsToEdit] = useState({
     firstName: contactToEdit.firstName,
@@ -80,6 +88,17 @@ function EditContactForm({ contactToEdit, getContacts }) {
           .then((contactData) => {
             console.log("contactData: ", contactData);
             getContacts();
+
+            const editedContact = {
+              ...contactData,
+              address: {
+                ...addressData,
+              },
+            };
+
+            setContactToView(editedContact);
+            setHideContactView(!hideContactView);
+            setHideEditForm(!hideEditForm);
           });
       });
   };
@@ -144,6 +163,9 @@ function EditContactForm({ contactToEdit, getContacts }) {
       <div className="actions-section">
         <button className="button blue" type="submit">
           Edit
+        </button>
+        <button className="button blue" type="submit">
+          Delete
         </button>
       </div>
     </form>

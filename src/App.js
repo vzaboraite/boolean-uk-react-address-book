@@ -63,6 +63,11 @@ export default function App() {
           <EditContactForm
             contactToEdit={contactToEdit}
             getContacts={getContacts}
+            hideContactView={hideContactView}
+            hideEditForm={hideEditForm}
+            setContactToView={setContactToView}
+            setHideContactView={setHideContactView}
+            setHideEditForm={setHideEditForm}
           />
         )}
         {!hideContactView && <ContactView contactToView={contactToView} />}
