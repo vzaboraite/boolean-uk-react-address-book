@@ -16,7 +16,11 @@ function ContactsList(props) {
       <header>
         <h2>Contacts</h2>
         <button
-          onClick={() => setHideCreateForm(!hideCreateForm)}
+          onClick={() => {
+            setHideCreateForm(!hideCreateForm);
+            setHideEditForm(true);
+            setHideContactView(true);
+          }}
           className="button new-contact-btn"
         >
           {hideCreateForm ? "Create" : "Cancel"}
@@ -29,12 +33,14 @@ function ContactsList(props) {
           const handleViewButton = (event) => {
             setHideContactView(false);
             setHideEditForm(true);
+            setHideCreateForm(true);
             setContactToView(contact);
           };
 
           const handleEditButton = (event) => {
             setHideEditForm(false);
             setHideContactView(true);
+            setHideCreateForm(true);
             setContactToEdit(contact);
           };
 
