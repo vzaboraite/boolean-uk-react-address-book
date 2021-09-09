@@ -9,6 +9,7 @@ function EditContactForm(props) {
     setContactToView,
     setHideContactView,
     setHideEditForm,
+    setNotification,
   } = props;
 
   const [userInputsToEdit, setUserInputsToEdit] = useState({
@@ -42,8 +43,6 @@ function EditContactForm(props) {
     const targetValue = event.target.value;
     const inputType = event.target.type;
     const isChecked = event.target.checked;
-
-    console.log({ inputFieldName, targetValue, inputType, isChecked });
 
     if (inputType === "checkbox") {
       setUserInputsToEdit({
@@ -80,8 +79,6 @@ function EditContactForm(props) {
     fetch(`http://localhost:3030/addresses/${addressId}`, addressFetchOptions)
       .then((res) => res.json())
       .then((addressData) => {
-        console.log("addressData: ", addressData);
-
         const contactInfoToEdit = {
           firstName,
           lastName,
@@ -100,7 +97,6 @@ function EditContactForm(props) {
         fetch(`http://localhost:3030/contacts/${id}`, contactFetchOptions)
           .then((res) => res.json())
           .then((contactData) => {
-            console.log("contactData: ", contactData);
             getContacts();
 
             const editedContact = {
@@ -117,21 +113,22 @@ function EditContactForm(props) {
       });
   };
 
-  const handleDeleteButton = (event) => {
+  const handleDeleteButton = () => {
     const contactToDelete = { ...contactToEdit };
     const { addressId, id } = contactToDelete;
-    console.log(event);
-    fetch(`http://localhost:3030/addresses/${addressId}`, { method: "DELETE" })
+    fetch(`http://localhost:3030/contacts/${id}`, { method: "DELETE" })
       .then((res) => res.json())
-      .then((dataToDelete) => {
-        console.log({ dataToDelete });
-
-        fetch(`http://localhost:3030/contacts/${id}`, { method: "DELETE" })
+      .then(() => {
+        fetch(`http://localhost:3030/addresses/${addressId}`, {
+          method: "DELETE",
+        })
           .then((res) => res.json())
-          .then((dataToDelete) => {
-            console.log({ dataToDelete });
+          .then(() => {
+            setNotification("Contact deleted successfully!");
+            setHideEditForm(!hideEditForm);
+
+            getContacts();
           });
-        getContacts();
       });
   };
 
@@ -186,7 +183,6 @@ function EditContactForm(props) {
           id="block-checkbox"
           name="blockContact"
           type="checkbox"
-          value={blockContact}
           checked={blockContact}
           onChange={handleFormInput}
         />
@@ -196,9 +192,13 @@ function EditContactForm(props) {
         <button className="button blue" type="submit">
           Edit
         </button>
+        {/*
+        To prevent this button to trigger submitting the form, set type attribute value to `button`
+        Resource: https://stackoverflow.com/questions/932653/how-to-prevent-buttons-from-submitting-forms
+        */}
         <button
           className="button blue"
-          type="submit"
+          type="button"
           onClick={handleDeleteButton}
         >
           Delete

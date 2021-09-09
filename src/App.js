@@ -3,6 +3,7 @@ import ContactsList from "./components/ContactsList";
 import ContactView from "./components/ContactView";
 import CreateContactForm from "./components/CreateContactForm";
 import EditContactForm from "./components/EditContactForm";
+import Notification from "./components/Notification";
 import "./styles.css";
 
 export default function App() {
@@ -14,11 +15,7 @@ export default function App() {
   const [contactToEdit, setContactToEdit] = useState(null);
   const [contactToView, setContactToView] = useState(null);
 
-  console.log("State ", {
-    contacts,
-    hideCreateForm,
-    contactToView,
-  });
+  const [notification, setNotification] = useState("");
 
   // Get contacts data from the server
   useEffect(() => {
@@ -30,7 +27,6 @@ export default function App() {
     fetch("http://localhost:3030/contacts")
       .then((res) => res.json())
       .then((contactsData) => {
-        console.log(contactsData);
         setContacts(contactsData);
       });
   }
@@ -47,6 +43,7 @@ export default function App() {
         setHideContactView={setHideContactView}
         setContactToEdit={setContactToEdit}
         setContactToView={setContactToView}
+        setNotification={setNotification}
       />
       <main className="view-section">
         {!hideCreateForm && (
@@ -68,9 +65,16 @@ export default function App() {
             setContactToView={setContactToView}
             setHideContactView={setHideContactView}
             setHideEditForm={setHideEditForm}
+            setNotification={setNotification}
           />
         )}
-        {!hideContactView && <ContactView contactToView={contactToView} />}
+        {!hideContactView && (
+          <ContactView
+            contactToView={contactToView}
+            notification={notification}
+          />
+        )}
+        {notification && <Notification text={notification} />}
       </main>
     </>
   );

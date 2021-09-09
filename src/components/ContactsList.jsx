@@ -2,13 +2,12 @@ function ContactsList(props) {
   const {
     contacts,
     hideCreateForm,
-    hideEditForm,
-    hideContactView,
     setHideCreateForm,
     setHideEditForm,
     setHideContactView,
     setContactToEdit,
     setContactToView,
+    setNotification,
   } = props;
 
   return (
@@ -20,6 +19,7 @@ function ContactsList(props) {
             setHideCreateForm(!hideCreateForm);
             setHideEditForm(true);
             setHideContactView(true);
+            setNotification("");
           }}
           className="button new-contact-btn"
         >
@@ -35,6 +35,7 @@ function ContactsList(props) {
             setHideEditForm(true);
             setHideCreateForm(true);
             setContactToView(contact);
+            setNotification("");
           };
 
           const handleEditButton = (event) => {
@@ -42,6 +43,7 @@ function ContactsList(props) {
             setHideContactView(true);
             setHideCreateForm(true);
             setContactToEdit(contact);
+            setNotification("");
           };
 
           return (

@@ -149,3 +149,8 @@ h2 {
 .address-card h2 {
   font-size: 1.15rem;
 }
+
+.notification-card {
+  padding: 20px;
+  text-align: center;
+}

@@ -18,8 +18,6 @@ function CreateContactForm({
     blockContact: false,
   });
 
-  console.log({ userInput });
-
   // In order to use input field names dynamically, I've set `name` attributes in the form
   // accordingly to the `user Input` state object key names.
 
@@ -28,8 +26,6 @@ function CreateContactForm({
     const targetValue = event.target.value;
     const inputType = event.target.type;
     const isChecked = event.target.checked;
-
-    console.log({ inputFieldName, targetValue, inputType, isChecked });
 
     if (inputType === "checkbox") {
       setUserInput({
@@ -66,8 +62,6 @@ function CreateContactForm({
     fetch("http://localhost:3030/addresses", addressFetchOptions)
       .then((res) => res.json())
       .then((addressData) => {
-        console.log("addressData: ", addressData);
-
         // Create contactInfo object and "POST" it to the `/contacts` endpoint.
         // Because contactInfo requires addressId, it is created inside `addresses fetch request`
         // to get that id from addressData.
@@ -92,7 +86,6 @@ function CreateContactForm({
         fetch("http://localhost:3030/contacts", contactFetchOptions)
           .then((res) => res.json())
           .then((contactData) => {
-            console.log("contactData: ", contactData);
             // Function getContacts() is called here, to do the fetch request(which is defined
             // in App.js), which gets updated contacts array and enforces to re-render the contacts list.
             getContacts();
