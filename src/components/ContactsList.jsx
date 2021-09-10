@@ -28,8 +28,8 @@ function ContactsList(props) {
       </header>
       <ul className="contacts-list">
         {contacts.map((contact, index) => {
-          const { firstName, lastName } = contact;
-
+          const { firstName, lastName, address } = contact;
+          const { street, postCode } = address;
           const handleViewButton = (event) => {
             setHideContactView(false);
             setHideEditForm(true);
@@ -48,9 +48,15 @@ function ContactsList(props) {
 
           return (
             <li key={index}>
-              <h3>
-                {firstName} {lastName}
-              </h3>
+              <div>
+                <h3>
+                  {firstName} {lastName}
+                </h3>
+                <p>
+                  {street}, {postCode}
+                </p>
+              </div>
+
               <button onClick={handleViewButton} className="button">
                 View
               </button>
