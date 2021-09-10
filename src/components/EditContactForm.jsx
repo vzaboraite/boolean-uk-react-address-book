@@ -12,31 +12,56 @@ function EditContactForm(props) {
     setNotification,
   } = props;
 
-  const [userInputsToEdit, setUserInputsToEdit] = useState({
+  console.log("State inside EditContactsForm: ", { contactToEdit });
+
+  // const [userInputsToEdit, setUserInputsToEdit] = useState({
+  //   firstName: contactToEdit.firstName,
+  //   lastName: contactToEdit.lastName,
+  //   address: {
+  //     street: contactToEdit.address.street,
+  //     city: contactToEdit.address.city,
+  //     postCode: contactToEdit.address.postCode,
+  //   },
+  //   blockContact: contactToEdit.blockContact,
+  // });
+
+  const [contactInputs, setContactInputs] = useState({
     firstName: contactToEdit.firstName,
     lastName: contactToEdit.lastName,
-    street: contactToEdit.address.street,
-    city: contactToEdit.address.city,
-    postCode: contactToEdit.address.postCode,
     blockContact: contactToEdit.blockContact,
   });
 
-  /* This useEffect sets `EditContactForm` with contact data. It is triggered when `Edit`
-     button is clicked on specific in `ContactList` item
+  const [addressInputs, setAddressInputs] = useState({
+    street: contactToEdit.address.street,
+    city: contactToEdit.address.city,
+    postCode: contactToEdit.address.postCode,
+  });
+
+  // console.log("Inside EditContactsForm: ", { contactInputs, addressInputs });
+
+  /* This useEffect keeps track of when contactToEdit changes, sets `EditContactForm` component with contact data.
      Resource: https://stackoverflow.com/questions/54865764/react-usestate-does-not-reload-state-from-props */
   useEffect(() => {
-    setUserInputsToEdit({
-      firstName: contactToEdit.firstName,
-      lastName: contactToEdit.lastName,
-      street: contactToEdit.address.street,
-      city: contactToEdit.address.city,
-      postCode: contactToEdit.address.postCode,
-      blockContact: contactToEdit.blockContact,
+    // to prevent mutating contact
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/delete
+    const addressToEdit = {
+      ...contactToEdit.address,
+    };
+    const contactForState = { ...contactToEdit };
+
+    // console.log({ addressToEdit, contactForState });
+    delete contactForState.address;
+    setContactInputs({
+      ...contactForState,
+    });
+
+    setAddressInputs({
+      ...addressToEdit,
     });
   }, [contactToEdit]);
 
-  const { firstName, lastName, street, city, postCode, blockContact } =
-    userInputsToEdit;
+  const { firstName, lastName, blockContact } = contactInputs;
+  const { street, city, postCode } = addressInputs;
 
   const handleFormInput = (event) => {
     const inputFieldName = event.target.name;
@@ -44,16 +69,27 @@ function EditContactForm(props) {
     const inputType = event.target.type;
     const isChecked = event.target.checked;
 
-    if (inputType === "checkbox") {
-      setUserInputsToEdit({
-        ...userInputsToEdit,
-        [inputFieldName]: isChecked,
-      });
-    } else {
-      setUserInputsToEdit({
-        ...userInputsToEdit,
+    if (
+      inputFieldName === "city" ||
+      inputFieldName === "street" ||
+      inputFieldName === "postCode"
+    ) {
+      setAddressInputs({
+        ...addressInputs,
         [inputFieldName]: targetValue,
       });
+    } else {
+      if (inputType === "checkbox") {
+        setContactInputs({
+          ...contactInputs,
+          [inputFieldName]: isChecked,
+        });
+      } else {
+        setContactInputs({
+          ...contactInputs,
+          [inputFieldName]: targetValue,
+        });
+      }
     }
   };
 
@@ -79,6 +115,8 @@ function EditContactForm(props) {
     fetch(`http://localhost:3030/addresses/${addressId}`, addressFetchOptions)
       .then((res) => res.json())
       .then((addressData) => {
+        console.log({ addressData });
+
         const contactInfoToEdit = {
           firstName,
           lastName,
@@ -94,9 +132,11 @@ function EditContactForm(props) {
           body: JSON.stringify(contactInfoToEdit),
         };
 
+        // if something changes in contactsInput, run this:
         fetch(`http://localhost:3030/contacts/${id}`, contactFetchOptions)
           .then((res) => res.json())
           .then((contactData) => {
+            console.log({ contactData });
             getContacts();
 
             const editedContact = {
@@ -111,6 +151,7 @@ function EditContactForm(props) {
             setHideEditForm(!hideEditForm);
           });
       });
+    //  otherwise run addresses endpoint fetch
   };
 
   const handleDeleteButton = () => {
