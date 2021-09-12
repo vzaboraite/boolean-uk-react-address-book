@@ -28,6 +28,20 @@ export default function App() {
       .then((res) => res.json())
       .then((contactsData) => {
         setContacts(contactsData);
+      })
+      /* While updating /contacts and /addresses at the same time caused errors 
+       on GET request => (GET http://localhost:3030/contacts net::ERR_CONNECTION_REFUSED), 
+       the solution was to use .catch() for the error handling and re-calling getContacts function after 100ms.
+       
+       Resources: https://stackoverflow.com/questions/38235715/fetch-reject-promise-and-catch-the-error-if-status-is-not-ok
+                  https://www.w3schools.com/jsref/met_console_error.asp
+                  https://medium.com/suyeonme/javascript-fetch-multiple-data-at-once-in-delay-9a74ef6afc7
+       */
+      .catch(() => {
+        console.error(
+          "Wasn't able to fetch /contacts, make sure that json-server is running. Retrying..."
+        );
+        setTimeout(getContacts, 100);
       });
   }
 
