@@ -42,8 +42,9 @@ function EditContactForm(props) {
   /* This useEffect keeps track of when contactToEdit changes, sets `EditContactForm` component with contact data.
      Resource: https://stackoverflow.com/questions/54865764/react-usestate-does-not-reload-state-from-props */
   useEffect(() => {
-    // to prevent mutating contact
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/delete
+    // To prevent mutating contactToEdit, save references to contactToEdit and contactToEdit.address in object variables
+    // To delete address from contactForState object, use delete operator:
+    // Resource: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/delete
     const addressToEdit = {
       ...contactToEdit.address,
     };
@@ -95,63 +96,94 @@ function EditContactForm(props) {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-
-    const addressInfoToEdit = {
-      street,
-      city,
-      postCode,
-    };
-
-    const addressFetchOptions = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(addressInfoToEdit),
-    };
-
     const { addressId, id } = contactToEdit;
 
-    fetch(`http://localhost:3030/addresses/${addressId}`, addressFetchOptions)
-      .then((res) => res.json())
-      .then((addressData) => {
-        console.log({ addressData });
+    /* In order to send one PUT request at a time to the server, we need to separate `contactInputs` and `addressInputs` into 
+    separate states and do separate fetch/PUT requests accordingly. 
+    If both states were updated, send two PUT requests to the server accordingly to update both `contacts` and `addresses` endpoints. */
 
-        const contactInfoToEdit = {
-          firstName,
-          lastName,
-          blockContact,
-          addressId,
-        };
+    // If something changes in contactsInputs, update `contacts` endpoint.
+    // That means, if user changes/updates the initial input value got from `contactToEdit`
+    // that has been set to `contactInputs` then we send to the server updated data and keep `address` data unchanged:
+    if (
+      contactInputs.firstName !== contactToEdit.firstName ||
+      contactInputs.lastName !== contactToEdit.lastName ||
+      contactInputs.blockContact !== contactToEdit.blockContact
+    ) {
+      const contactInfoToEdit = {
+        firstName,
+        lastName,
+        blockContact,
+        addressId,
+      };
 
-        const contactFetchOptions = {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(contactInfoToEdit),
-        };
+      const fetchOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(contactInfoToEdit),
+      };
 
-        // if something changes in contactsInput, run this:
-        fetch(`http://localhost:3030/contacts/${id}`, contactFetchOptions)
-          .then((res) => res.json())
-          .then((contactData) => {
-            console.log({ contactData });
-            getContacts();
+      fetch(`http://localhost:3030/contacts/${id}`, fetchOptions)
+        .then((res) => res.json())
+        .then((contactData) => {
+          console.log({ contactData });
+          getContacts();
 
-            const editedContact = {
-              ...contactData,
-              address: {
-                ...addressData,
-              },
-            };
+          const updatedContact = {
+            ...contactData,
+            address: {
+              ...addressInputs,
+            },
+          };
 
-            setContactToView(editedContact);
-            setHideContactView(!hideContactView);
-            setHideEditForm(!hideEditForm);
-          });
-      });
-    //  otherwise run addresses endpoint fetch
+          setContactToView(updatedContact);
+          setHideContactView(false);
+          setHideEditForm(true);
+        });
+    }
+
+    // If something changes in addressInputs, update `addresses` endpoint.
+    // That means, if user changes/updates the initial input value got from `contactToEdit.address`
+    // that has been set to `addressInputs` then we send to the server updated data and keep `contact` data unchanged:
+    if (
+      addressInputs.street !== contactToEdit.address.street ||
+      addressInputs.city !== contactToEdit.address.city ||
+      addressInputs.postCode !== contactToEdit.address.postCode
+    ) {
+      const addressInfoToEdit = {
+        street,
+        city,
+        postCode,
+      };
+
+      const fetchOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(addressInfoToEdit),
+      };
+
+      fetch(`http://localhost:3030/addresses/${addressId}`, fetchOptions)
+        .then((res) => res.json())
+        .then((addressData) => {
+          console.log({ addressData });
+          getContacts();
+
+          const updatedContact = {
+            ...contactInputs,
+            address: {
+              ...addressData,
+            },
+          };
+
+          setContactToView(updatedContact);
+          setHideContactView(false);
+          setHideEditForm(true);
+        });
+    }
   };
 
   const handleDeleteButton = () => {
