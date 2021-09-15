@@ -9,13 +9,16 @@ function CreateContactForm({
   setContactToView,
 }) {
   // State as one object to store user input from the form
-  const [userInput, setUserInput] = useState({
+  const [contactInputs, setContactInputs] = useState({
     firstName: "",
     lastName: "",
+    blockContact: false,
+  });
+
+  const [addressInputs, setAddressInputs] = useState({
     street: "",
     city: "",
     postCode: "",
-    blockContact: false,
   });
 
   // In order to use input field names dynamically, I've set `name` attributes in the form
@@ -27,23 +30,34 @@ function CreateContactForm({
     const inputType = event.target.type;
     const isChecked = event.target.checked;
 
-    if (inputType === "checkbox") {
-      setUserInput({
-        ...userInput,
-        [inputFieldName]: isChecked,
-      });
-    } else {
-      setUserInput({
-        ...userInput,
+    if (
+      inputFieldName === "city" ||
+      inputFieldName === "street" ||
+      inputFieldName === "postCode"
+    ) {
+      setAddressInputs({
+        ...addressInputs,
         [inputFieldName]: targetValue,
       });
+    } else {
+      if (inputType === "checkbox") {
+        setContactInputs({
+          ...contactInputs,
+          [inputFieldName]: isChecked,
+        });
+      } else {
+        setContactInputs({
+          ...contactInputs,
+          [inputFieldName]: targetValue,
+        });
+      }
     }
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
     // Create addressInfo object and "POST" it to the `/addresses` endpoint
-    const { street, city, postCode } = userInput;
+    const { street, city, postCode } = addressInputs;
 
     const addressInfo = {
       street,
@@ -51,7 +65,7 @@ function CreateContactForm({
       postCode,
     };
 
-    const addressFetchOptions = {
+    const fetchOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,14 +73,14 @@ function CreateContactForm({
       body: JSON.stringify(addressInfo),
     };
 
-    fetch("http://localhost:3030/addresses", addressFetchOptions)
+    fetch("http://localhost:3030/addresses", fetchOptions)
       .then((res) => res.json())
       .then((addressData) => {
         // Create contactInfo object and "POST" it to the `/contacts` endpoint.
         // Because contactInfo requires addressId, it is created inside `addresses fetch request`
         // to get that id from addressData.
 
-        const { firstName, lastName, blockContact } = userInput;
+        const { firstName, lastName, blockContact } = contactInputs;
 
         const contactInfo = {
           firstName,
@@ -75,7 +89,7 @@ function CreateContactForm({
           addressId: addressData.id,
         };
 
-        const contactFetchOptions = {
+        const fetchOptions = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -83,7 +97,7 @@ function CreateContactForm({
           body: JSON.stringify(contactInfo),
         };
 
-        fetch("http://localhost:3030/contacts", contactFetchOptions)
+        fetch("http://localhost:3030/contacts", fetchOptions)
           .then((res) => res.json())
           .then((contactData) => {
             // Function getContacts() is called here, to do the fetch request(which is defined

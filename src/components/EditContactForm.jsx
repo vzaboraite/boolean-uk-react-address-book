@@ -4,7 +4,6 @@ function EditContactForm(props) {
   const {
     contactToEdit,
     getContacts,
-    hideContactView,
     hideEditForm,
     setContactToView,
     setHideContactView,
@@ -14,29 +13,17 @@ function EditContactForm(props) {
 
   console.log("State inside EditContactsForm: ", { contactToEdit });
 
-  // const [userInputsToEdit, setUserInputsToEdit] = useState({
-  //   firstName: contactToEdit.firstName,
-  //   lastName: contactToEdit.lastName,
-  //   address: {
-  //     street: contactToEdit.address.street,
-  //     city: contactToEdit.address.city,
-  //     postCode: contactToEdit.address.postCode,
-  //   },
-  //   blockContact: contactToEdit.blockContact,
-  // });
-
   const [contactInputs, setContactInputs] = useState({
-    firstName: contactToEdit.firstName,
-    lastName: contactToEdit.lastName,
-    blockContact: contactToEdit.blockContact,
+    firstName: "",
+    lastName: "",
+    blockContact: false,
   });
 
   const [addressInputs, setAddressInputs] = useState({
-    street: contactToEdit.address.street,
-    city: contactToEdit.address.city,
-    postCode: contactToEdit.address.postCode,
+    street: "",
+    city: "",
+    postCode: "",
   });
-
   // console.log("Inside EditContactsForm: ", { contactInputs, addressInputs });
 
   /* This useEffect keeps track of when contactToEdit changes, sets `EditContactForm` component with contact data.
